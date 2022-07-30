@@ -93,9 +93,15 @@ class Engine
         }
     }
 
+    getMaxId()
+    {
+        let ids = this.game_objects.map(function(object){ return object.id; });
+        return Math.max(ids);
+    }
+
     addObject(game_object)
     {
-        game_object.id = this.game_objects.length;
+        game_object.id = this.getMaxId()+1;
         this.game_objects.push(game_object);
         return game_object.id;
     }
@@ -127,7 +133,6 @@ class Engine
             //press button, check all currently pressed butons
             window.addEventListener('keydown', function(e){
 
-                const self = this;
                 self.keys[e.code] = true;
                         
                 self.button_actions.forEach(function(button_action){
@@ -144,7 +149,6 @@ class Engine
             //release button, check only one released currently button
             window.addEventListener('keyup', function(e){
 
-                const self = engine;
                 self.keys[e.code] = false;
             
                 self.release_button_actions.forEach(function(release_button_action){
