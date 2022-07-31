@@ -7,8 +7,8 @@ function getRandomInt(min, max)
 
 //game config
 const pipe_margin = 150;
-const pipe_width = 125;
-const pipe_height = 1000;
+const pipe_width = 128;
+const pipe_height = 1280;
 const pipe_speed = 5;
 const spawn_pipe_interval = 1500;
 const pipes_max_height_spawn = window.innerHeight/3.5;
@@ -40,7 +40,7 @@ function start(player_x, player_y, modal, scores_text)
     engine.clear();
 
     //respawn player
-    player = new Player(player_x, player_y, 50, 50, 'yellow', gravity, max_gravity, jump_force);
+    player = new Player(player_x, player_y, 50, 50, bird_sprite, gravity, max_gravity, jump_force);
     engine.addObject(player);
 
     //spawning pipes
@@ -51,9 +51,9 @@ function start(player_x, player_y, modal, scores_text)
             const y_movement = getRandomInt(-pipes_max_height_spawn, pipes_max_height_spawn);
 
             let start_x = canvas.width-pipe_width-1;
-            const pipe1 = new Pipe(start_x, canvas.height/2 - pipe_height - pipe_margin + y_movement, pipe_width, pipe_height, 'green', pipe_speed);
-            const pipe2 = new Pipe(start_x, canvas.height/2 + pipe_margin + y_movement, pipe_width, pipe_height, 'green', pipe_speed);
-            const score_area = new Pipe(start_x, pipe1.y + pipe1.height, pipe_width, pipe_margin*2, 'rgba(0, 0, 0, 0)', pipe_speed, true);
+            const pipe1 = new Pipe(start_x, canvas.height/2 - pipe_height - pipe_margin + y_movement, pipe_width, pipe_height, pipe_up_sprite, pipe_speed);
+            const pipe2 = new Pipe(start_x, canvas.height/2 + pipe_margin + y_movement, pipe_width, pipe_height, pipe_down_sprite, pipe_speed);
+            const score_area = new Pipe(start_x, pipe1.y + pipe1.height, pipe_width, pipe_margin*2, null, pipe_speed, true);
             
             pipes.push(pipe1);
             pipes.push(pipe2);
@@ -65,7 +65,7 @@ function start(player_x, player_y, modal, scores_text)
 
             if(getRandomInt(0, coin_probability) == 1)
             {
-                const coin = new Coin(start_x + pipe_width/2 - 25, score_area.y + score_area.height/2, 50, 50, 'gold', pipe_speed);
+                const coin = new Coin(start_x + pipe_width/2 - 25, score_area.y + score_area.height/2, 50, 50, coin_sprite, pipe_speed);
                 coins.push(coin);
                 engine.addObject(coin);
             }
@@ -109,7 +109,7 @@ const scores_text = document.querySelector('#scoresText');
 const last_highscores_text = document.querySelector('#lastHighscoresText');
 const final_scores_text = document.querySelector("#finalScoresText");
 
-const engine = new Engine(canvas, 'aqua');
+const engine = new Engine(canvas, background_sprite);
 const progress_tracker = new Progress();
 
 //delete pipes
