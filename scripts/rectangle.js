@@ -17,9 +17,9 @@ class Rectangle extends GameObject
     rectangleCollided(object)
     {
         if(this.x + this.width >= object.x 
-            && this.x + this.width <= object.x + object.width
+            && this.x <= object.x + object.width
             && this.y + this.height >= object.y
-            && this.y + this.height <= object.y + object.height) return true;
+            && this.y <= object.y + object.height) return true;
 
         return false;
     }

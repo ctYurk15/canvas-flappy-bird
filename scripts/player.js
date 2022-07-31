@@ -21,6 +21,6 @@ class Player extends Rectangle
 
     jump()
     {
-        this.y_velocity -= this.jump_force;
+        this.y_velocity = -this.jump_force;
     }
 }

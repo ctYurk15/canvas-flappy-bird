@@ -10,3 +10,44 @@ body
     overflow: hidden;
     font-family: 'alagard';
 }
+
+.death-text
+{
+    color: red;
+}
+
+.hidden
+{
+    display: none !important;
+}
+
+.ui-container
+{
+    position: absolute;
+    background-color: antiquewhite;
+    padding: 10px;
+    border-radius: 10px;
+    width: 50%;
+    height: 50vh;
+    display: grid;
+    text-align: center;
+    top: 25vh;
+    left: 25%;
+    justify-content: center;
+    align-items: center;
+}
+
+.ui-container button
+{
+    font-family: 'alagard';
+    width: 200px;
+    height: 50px;
+    border: 0;
+    background-color: lightcoral;
+}
+
+.ui-container button:hover
+{
+    box-shadow: 1px 1px 4px lightgray;
+    cursor: pointer;
+}
