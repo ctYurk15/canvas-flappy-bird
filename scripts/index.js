@@ -12,12 +12,17 @@ const pipe_height = 1000;
 const pipe_speed = 5;
 const spawn_pipe_interval = 1500;
 const pipes_max_height_spawn = window.innerHeight/3.5;
+
 const gravity = 2;
 const max_gravity = 8;
 const jump_force = 25;
 
+const coin_probability = 2;
+const coin_score = 3;
+
 //in-game state
 let pipes = [];
+let coins = [];
 let player = null;
 let scores = 0;
 
@@ -57,6 +62,13 @@ function start(player_x, player_y, modal, scores_text)
             engine.addObject(pipe1);
             engine.addObject(pipe2);
             engine.addObject(score_area);
+
+            if(getRandomInt(0, coin_probability) == 1)
+            {
+                const coin = new Coin(start_x + pipe_width/2 - 25, score_area.y + score_area.height/2, 50, 50, 'gold', pipe_speed);
+                coins.push(coin);
+                engine.addObject(coin);
+            }
         }
         else clearInterval(pipes_interval);
 
@@ -153,6 +165,31 @@ engine.addFrameAction(function(){
 
         engine.deleteObject(touched_score_area_id);
         pipes = pipes.filter(function(pipe){ return pipe.id != touched_score_area_id; });
+    }
+
+});
+
+//check coins collision
+engine.addFrameAction(function(){
+
+    let coin_id = null;
+
+    for(let coin of coins)
+    {
+        if(coin.rectangleCollided(player))
+        {
+            scores += coin_score;
+            coin_id = coin.id;
+            break;
+        }
+    }
+
+    if(coin_id != null)
+    {
+        scores_text.innerHTML = 'Scores: '+scores;
+
+        engine.deleteObject(coin_id);
+        coins = coins.filter(function(coin){ return coin.id != coin_id; });
     }
 
 });
