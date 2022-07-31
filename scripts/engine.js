@@ -7,6 +7,7 @@ class Engine
     frame_actions = [];
     is_working = false;
     paused = false;
+    next_id = 1;
 
     constructor(canvas, background)
     {
@@ -93,15 +94,10 @@ class Engine
         }
     }
 
-    getMaxId()
-    {
-        let ids = this.game_objects.map(function(object){ return object.id; });
-        return Math.max(ids);
-    }
-
     addObject(game_object)
     {
-        game_object.id = this.getMaxId()+1;
+        game_object.id = this.next_id;
+        this.next_id++;
         this.game_objects.push(game_object);
         return game_object.id;
     }

@@ -8,11 +8,14 @@
   <body>
     <div class="ui-container">
       <h2 class="death-text hidden">Game over!</h2>
-      <h2>Last highscore: <span>0</span></h2>
+      <h2 id="finalScoresText" class="hidden">Scores: 0</h2>
+      <h2 id="lastHighscoresText">Last highscore: 0</h2>
       <button id="startButton">Start</button>
     </div>
+    <span id="scoresText" class="hidden">Score: 0</span>
     <canvas></canvas>
   </body>
+  <script src="scripts/progress.js"></script>
   <script src="scripts/sprite.js"></script>
   <script src="scripts/sprites-import.js"></script>
   <script src="scripts/gameobject.js"></script>

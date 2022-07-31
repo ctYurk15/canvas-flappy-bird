@@ -1,6 +1,6 @@
 class GameObject
 {
-    id = null;
+    id = 0;
     paralax_force = 0;
     paralax_scroll = 0;
 

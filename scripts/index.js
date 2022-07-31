@@ -19,15 +19,22 @@ const jump_force = 25;
 //in-game state
 let pipes = [];
 let player = null;
+let scores = 0;
 
-function start(player_x, player_y, modal)
+function start(player_x, player_y, modal, scores_text)
 {
+    //switch ui
     modal.classList.add('hidden');
-    pipes = [];
+    scores_text.classList.remove('hidden');
+    scores_text.innerHTML = 'Scores: 0';
 
+    //clear in-game state
+    pipes = [];
+    scores = 0;
     engine.clearObjects();
     engine.clear();
 
+    //respawn player
     player = new Player(player_x, player_y, 50, 50, 'yellow', gravity, max_gravity, jump_force);
     engine.addObject(player);
 
@@ -38,14 +45,18 @@ function start(player_x, player_y, modal)
         {
             const y_movement = getRandomInt(-pipes_max_height_spawn, pipes_max_height_spawn);
 
-            const pipe1 = new Pipe(canvas.width-pipe_width-1, canvas.height/2 - pipe_height - pipe_margin + y_movement, pipe_width, pipe_height, 'green', pipe_speed);
-            const pipe2 = new Pipe(canvas.width-pipe_width-1, canvas.height/2 + pipe_margin + y_movement, pipe_width, pipe_height, 'green', pipe_speed);
+            let start_x = canvas.width-pipe_width-1;
+            const pipe1 = new Pipe(start_x, canvas.height/2 - pipe_height - pipe_margin + y_movement, pipe_width, pipe_height, 'green', pipe_speed);
+            const pipe2 = new Pipe(start_x, canvas.height/2 + pipe_margin + y_movement, pipe_width, pipe_height, 'green', pipe_speed);
+            const score_area = new Pipe(start_x, pipe1.y + pipe1.height, pipe_width, pipe_margin*2, 'rgba(0, 0, 0, 0)', pipe_speed, true);
             
             pipes.push(pipe1);
             pipes.push(pipe2);
+            pipes.push(score_area);
 
             engine.addObject(pipe1);
             engine.addObject(pipe2);
+            engine.addObject(score_area);
         }
         else clearInterval(pipes_interval);
 
@@ -54,12 +65,23 @@ function start(player_x, player_y, modal)
     engine.start();
 }
 
-function die(engine, modal, death_text)
+function die(engine, modal, death_text, final_scores_text, scores_text, last_highscores_text)
 {
+    //stop rendering
     engine.stop();
+    let new_record = progress_tracker.setNewHighscore(scores);
 
+    //switch ui
     modal.classList.remove('hidden');
     death_text.classList.remove('hidden');
+    final_scores_text.classList.remove('hidden');
+    scores_text.classList.add('hidden');
+
+    //change ui
+    last_highscores_text.innerHTML = 'Last highscores: '+progress_tracker.getHighscore();
+    final_scores_text.innerHTML = 'Scores: '+scores;
+    if(new_record) final_scores_text.innerHTML += ' (New record!)';
+    start_button.innerHTML = 'Restart';
 }
 
 //configuring canvas
@@ -71,8 +93,12 @@ canvas.height = window.innerHeight;
 const modal = document.querySelector(".ui-container");
 const death_text = document.querySelector('.death-text');
 const start_button = document.querySelector("#startButton");
+const scores_text = document.querySelector('#scoresText');
+const last_highscores_text = document.querySelector('#lastHighscoresText');
+const final_scores_text = document.querySelector("#finalScoresText");
 
 const engine = new Engine(canvas, 'aqua');
+const progress_tracker = new Progress();
 
 //delete pipes
 engine.addFrameAction(function(){
@@ -97,21 +123,37 @@ engine.addFrameAction(function(){
 engine.addFrameAction(function(){
     if(player.y - player.height > canvas.height)
     {
-        die(engine, modal, death_text);
+        die(engine, modal, death_text, final_scores_text, scores_text, last_highscores_text);
     }
 });
 
 //check death by pipes collision
 engine.addFrameAction(function(){
 
+    let touched_score_area_id = null;
+
     pipes.forEach(function(pipe){
 
-        if(pipe.rectangleCollided(player))
+        if(pipe.rectangleCollided(player) && !pipe.is_score_area)
         {
-            die(engine, modal, death_text);
+            die(engine, modal, death_text, final_scores_text, scores_text, last_highscores_text);
         }
+        else if(pipe.rectangleCollided(player) && pipe.is_score_area)
+        {
+            touched_score_area_id = pipe.id;
+        }
+        
 
     });
+
+    if(touched_score_area_id != null)
+    {
+        scores++;
+        scores_text.innerHTML = 'Scores: '+scores;
+
+        engine.deleteObject(touched_score_area_id);
+        pipes = pipes.filter(function(pipe){ return pipe.id != touched_score_area_id; });
+    }
 
 });
 
@@ -122,10 +164,11 @@ engine.addButtonPressEvent('Space', function(){
 
 //ui-binding
 start_button.addEventListener('click', function(){
-    start(canvas.width/2-25, canvas.height/2-25, modal);
+    start(canvas.width/2-25, canvas.height/2-25, modal, scores_text);
 });
 
 engine.clear();
+last_highscores_text.innerHTML = 'Last highscores: '+progress_tracker.getHighscore();
 
 //game loop
 let animation_frame;
