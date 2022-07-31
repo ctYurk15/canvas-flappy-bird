@@ -6,12 +6,15 @@ function getRandomInt(min, max)
 }
 
 //game config
-const pipe_margin = 100;
+const pipe_margin = 150;
 const pipe_width = 125;
 const pipe_height = 1000;
 const pipe_speed = 5;
 const spawn_pipe_interval = 1500;
 const pipes_max_height_spawn = window.innerHeight/3.5;
+const gravity = 2;
+const max_gravity = 8;
+const jump_force = 30;
 
 //in-game state
 let pipes = [];
@@ -22,7 +25,7 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 const engine = new Engine(canvas, 'aqua');
-const player = new Player(canvas.width/2-25, canvas.height/2-25, 50, 50, 'yellow');
+const player = new Player(canvas.width/2-25, canvas.height/2-25, 50, 50, 'yellow', gravity, max_gravity, jump_force);
 engine.addObject(player);
 
 //spawning pipes
@@ -43,8 +46,6 @@ let pipes_interval = setInterval(function(){
     }
     else clearInterval(pipes_interval);
 
-    console.log(pipes);
-
 }, spawn_pipe_interval);
 
 //delete pipes
@@ -64,6 +65,11 @@ engine.addFrameAction(function(){
     //delete from in-game array
     pipes = pipes.filter(function(pipe){ return !pipes_to_delete.includes(pipe.id); });
 
+});
+
+//player jump
+engine.addButtonPressEvent('Space', function(){
+    player.jump();
 });
 
 engine.start();
